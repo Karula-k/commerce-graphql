@@ -2,9 +2,35 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type OrderEntity {
+  id: String!
+  userId: String!
+  orderNumber: String!
+  orderStatus: OrderStatus!
+  totalAmount: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+enum OrderStatus {
+  draft
+  pending
+  paid
+  wip
+  done
+  cancel
+  refund
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
 type UserEntity {
   id: String!
   name: String!
+  orders: [OrderEntity]
 }
 
 type ProductEntity {
@@ -16,16 +42,33 @@ type ProductEntity {
   updatedAt: Timestamp!
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
+type TransactionEntity {
+  id: ID!
+  orderId: String!
+  paymentStatus: PaymentStatus!
+  amount: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  urlString: String
+  urlExpiry: String
+  order: OrderEntity!
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  cancelled
+}
 
 type Query {
   allUsers: [UserEntity!]
   getUser(id: String!): UserEntity
   getProducts: [ProductEntity!]
   getProduct(id: String!): ProductEntity
+  getOrders: [OrderEntity!]
+  getOrder(id: String!): OrderEntity
+  transactions: [TransactionEntity!]!
+  findOne(id: String!): TransactionEntity
 }
 
 type Mutation {
@@ -33,10 +76,22 @@ type Mutation {
   updateUser(data: CreateUserInput!, id: String!): UserEntity!
   createProduct(data: CreateProductInput!): ProductEntity!
   updateProduct(data: UpdateProductInput!): ProductEntity
+  createOrder(data: CreateOrderInput!): OrderEntity!
+  createTransaction(createTransactionInput: CreateTransactionInput!): TransactionEntity!
+  updateTransaction(id: String!, updateTransactionInput: UpdateTransactionInput!): TransactionEntity!
+  removeTransaction(id: String!): Boolean!
 }
 
 input CreateUserInput {
   name: String!
+  order: [CreateOrderInput!]
+}
+
+input CreateOrderInput {
+  userId: String!
+  orderNumber: String!
+  orderStatus: OrderStatus
+  totalAmount: Float!
 }
 
 input CreateProductInput {
@@ -50,4 +105,19 @@ input UpdateProductInput {
   price: Float
   stock: Int
   id: String!
+}
+
+input CreateTransactionInput {
+  orderId: String!
+  paymentStatus: PaymentStatus
+  amount: Float!
+  urlString: String
+  urlExpiry: Timestamp
+}
+
+input UpdateTransactionInput {
+  paymentStatus: String
+  amount: Float
+  urlString: String
+  urlExpiry: Timestamp
 }
