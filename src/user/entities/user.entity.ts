@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { OrderEntity } from 'src/order/entities/order.entity';
 
 @ObjectType()
 export class UserEntity {
@@ -7,4 +8,7 @@ export class UserEntity {
 
   @Field()
   name: string;
+
+  @Field(() => [OrderEntity], { nullable: 'itemsAndList' })
+  orders: OrderEntity[] | [];
 }

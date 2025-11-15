@@ -1,8 +1,16 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+  Root,
+} from '@nestjs/graphql';
 import { UserEntity } from './entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateUserInput } from './dto/create-user.input';
+import { OrderEntity } from 'src/order/entities/order.entity';
 
 @Resolver(UserEntity)
 export class UserResolver {
@@ -29,11 +37,20 @@ export class UserResolver {
     const result = await this.databaseService.user.create({
       data: {
         name: data.name,
+        orders:
+          data.order && Array.isArray(data.order)
+            ? { create: data.order }
+            : undefined,
+      },
+      include: {
+        orders: true,
       },
     });
+
     return {
       id: result.id,
       name: result.name,
+      orders: result.orders,
     };
   }
 
@@ -46,11 +63,28 @@ export class UserResolver {
       where: { id },
       data: {
         name: data.name,
+        orders:
+          data.order && Array.isArray(data.order)
+            ? { create: data.order }
+            : undefined,
+      },
+      include: {
+        orders: true,
       },
     });
     return {
       id: result.id,
       name: result.name,
+      orders: result.orders,
     };
+  }
+
+  @ResolveField()
+  async orders(@Root() user: UserEntity): Promise<OrderEntity[]> {
+    return this.databaseService.order.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 }
