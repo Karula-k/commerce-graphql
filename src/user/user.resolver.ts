@@ -1,8 +1,8 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserEntity } from './entities/user.entity/user.entity';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UserEntity } from './entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { CreateUserInput } from './dto/create-user.input/create-user.input';
+import { CreateUserInput } from './dto/create-user.input';
 
 @Resolver(UserEntity)
 export class UserResolver {
@@ -10,16 +10,22 @@ export class UserResolver {
     @Inject(DatabaseService) private readonly databaseService: DatabaseService,
   ) {}
 
-  @Query((returns) => [UserEntity], { nullable: true })
-  async allUsers(@Context() ctx) {
+  @Query(() => [UserEntity], { nullable: true })
+  async allUsers() {
     return this.databaseService.user.findMany();
   }
 
-  @Mutation((returns) => UserEntity)
-  async registerUser(
-    @Args('data') data: CreateUserInput,
-    @Context() ctx,
-  ): Promise<UserEntity> {
+  @Query(() => UserEntity, { nullable: true })
+  async getUser(@Args('id') id: string) {
+    return this.databaseService.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  @Mutation(() => UserEntity)
+  async registerUser(@Args('data') data: CreateUserInput): Promise<UserEntity> {
     const result = await this.databaseService.user.create({
       data: {
         name: data.name,
@@ -27,15 +33,14 @@ export class UserResolver {
     });
     return {
       id: result.id,
-      name: result.name ?? undefined,
+      name: result.name,
     };
   }
 
-  @Mutation((returns) => UserEntity)
+  @Mutation(() => UserEntity)
   async updateUser(
     @Args('data') data: CreateUserInput,
     @Args('id') id: string,
-    @Context() ctx,
   ): Promise<UserEntity> {
     const result = await this.databaseService.user.update({
       where: { id },
@@ -45,7 +50,7 @@ export class UserResolver {
     });
     return {
       id: result.id,
-      name: result.name ?? undefined,
+      name: result.name,
     };
   }
 }
