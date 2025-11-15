@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserEntity {
+  id: String!
+  name: String
+}
+
+type Query {
+  allUsers: [UserEntity!]
+}
+
+type Mutation {
+  registerUser(data: CreateUserInput!): UserEntity!
+  updateUser(data: CreateUserInput!, id: String!): UserEntity!
+}
+
+input CreateUserInput {
+  name: String!
+}
