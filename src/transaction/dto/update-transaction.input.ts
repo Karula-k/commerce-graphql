@@ -3,7 +3,7 @@ import { paymentStatus } from '@prisma/client';
 
 @InputType()
 export class UpdateTransactionInput {
-  @Field({ nullable: true })
+  @Field(() => paymentStatus, { nullable: true })
   paymentStatus?: paymentStatus;
 
   @Field(() => Float, { nullable: true })

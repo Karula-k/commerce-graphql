@@ -72,12 +72,15 @@ export class TransactionResolver {
   }
 
   @Mutation(() => Boolean)
-  removeTransaction(@Args('id', { type: () => String }) id: string) {
-    return this.databaseService.transaction.delete({
+  async removeTransaction(
+    @Args('id', { type: () => String }) id: string,
+  ): Promise<boolean> {
+    await this.databaseService.transaction.delete({
       where: {
         id: id,
       },
     });
+    return true;
   }
 
   @ResolveField(() => OrderEntity, { nullable: true })

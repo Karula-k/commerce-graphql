@@ -33,7 +33,7 @@ export class TransactionEntity {
   @Field(() => String, { nullable: true })
   urlString?: string | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   urlExpiry?: Date | null;
 
   @Field(() => OrderEntity)
