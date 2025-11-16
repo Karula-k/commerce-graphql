@@ -10,5 +10,5 @@ export class UserEntity {
   name: string;
 
   @Field(() => [OrderEntity], { nullable: 'itemsAndList' })
-  orders: OrderEntity[] | [];
+  orders?: OrderEntity[] | [];
 }

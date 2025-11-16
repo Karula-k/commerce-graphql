@@ -27,7 +27,6 @@ export class OrderProductResolver {
   ): Promise<OrderProductEntity> {
     return this.databaseService.orderProduct.create({
       data,
-      include: { order: true, product: true },
     });
   }
 
@@ -39,10 +38,6 @@ export class OrderProductResolver {
     return this.databaseService.orderProduct.update({
       where: { id },
       data: updateData,
-      include: {
-        order: true,
-        product: true,
-      },
     });
   }
 

@@ -34,7 +34,7 @@ export class UserResolver {
 
   @Mutation(() => UserEntity)
   async registerUser(@Args('data') data: CreateUserInput): Promise<UserEntity> {
-    const result = await this.databaseService.user.create({
+    return await this.databaseService.user.create({
       data: {
         name: data.name,
         orders:
@@ -42,16 +42,7 @@ export class UserResolver {
             ? { create: data.order }
             : undefined,
       },
-      include: {
-        orders: true,
-      },
     });
-
-    return {
-      id: result.id,
-      name: result.name,
-      orders: result.orders,
-    };
   }
 
   @Mutation(() => UserEntity)
@@ -59,7 +50,7 @@ export class UserResolver {
     @Args('data') data: CreateUserInput,
     @Args('id') id: string,
   ): Promise<UserEntity> {
-    const result = await this.databaseService.user.update({
+    return await this.databaseService.user.update({
       where: { id },
       data: {
         name: data.name,
@@ -68,15 +59,7 @@ export class UserResolver {
             ? { create: data.order }
             : undefined,
       },
-      include: {
-        orders: true,
-      },
     });
-    return {
-      id: result.id,
-      name: result.name,
-      orders: result.orders,
-    };
   }
 
   @ResolveField()
