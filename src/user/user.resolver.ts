@@ -37,10 +37,6 @@ export class UserResolver {
     return await this.databaseService.user.create({
       data: {
         name: data.name,
-        orders:
-          data.order && Array.isArray(data.order)
-            ? { create: data.order }
-            : undefined,
       },
     });
   }
@@ -54,10 +50,6 @@ export class UserResolver {
       where: { id },
       data: {
         name: data.name,
-        orders:
-          data.order && Array.isArray(data.order)
-            ? { create: data.order }
-            : undefined,
       },
     });
   }
