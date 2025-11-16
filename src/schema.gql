@@ -36,6 +36,7 @@ type UserEntity {
 type ProductEntity {
   id: String!
   name: String!
+  category: String!
   price: Float!
   stock: Int!
   createdAt: Timestamp!
@@ -75,7 +76,7 @@ enum PaymentStatus {
 type Query {
   allUsers: [UserEntity!]
   getUser(id: String!): UserEntity
-  getProducts: [ProductEntity!]
+  getProducts(name: String, category: String, minPrice: Float, maxPrice: Float): [ProductEntity!]
   getProduct(id: String!): ProductEntity
   getOrders: [OrderEntity!]
   getOrder(id: String!): OrderEntity
@@ -88,6 +89,7 @@ type Query {
 type Mutation {
   registerUser(data: CreateUserInput!): UserEntity!
   updateUser(data: CreateUserInput!, id: String!): UserEntity!
+  removeProduct(id: String!): Boolean!
   createProduct(data: CreateProductInput!): ProductEntity!
   updateProduct(data: UpdateProductInput!): ProductEntity
   createOrder(data: CreateOrderInput!): OrderEntity!
@@ -100,27 +102,29 @@ type Mutation {
 
 input CreateUserInput {
   name: String!
-  order: [CreateOrderInput!]
-}
-
-input CreateOrderInput {
-  userId: String!
-  orderNumber: String!
-  orderStatus: OrderStatus
-  totalAmount: Float!
 }
 
 input CreateProductInput {
   name: String!
+  category: String!
   price: Float!
   stock: Int!
 }
 
 input UpdateProductInput {
   name: String
+  category: String
   price: Float
   stock: Int
   id: String!
+}
+
+input CreateOrderInput {
+  userId: String!
+  orderNumber: String!
+  orderStatus: OrderStatus
+  totalAmount: Float
+  orderProducts: [CreateOrderProductInput!]!
 }
 
 input CreateOrderProductInput {
