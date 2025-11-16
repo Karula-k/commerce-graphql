@@ -5,6 +5,9 @@ export class CreateProductInput {
   @Field(() => String)
   name: string;
 
+  @Field(() => String)
+  category: string;
+
   @Field(() => Float)
   price: number;
 
