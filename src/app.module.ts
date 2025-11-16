@@ -7,6 +7,9 @@ import { UserModule } from './user/user.module';
 import { join } from 'path';
 import { DatabaseModule } from './database/database.module';
 import { ProductModule } from './product/product.module';
+import { OrderModule } from './order/order.module';
+import { OrderProductModule } from './order-product/order-product.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { ProductModule } from './product/product.module';
     UserModule,
     DatabaseModule,
     ProductModule,
+    OrderModule,
+    OrderProductModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
