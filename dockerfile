@@ -1,37 +1,51 @@
-# Use Alpine version for smaller size and better compatibility
-FROM node:20-alpine AS builder
+# Build stage
+FROM oven/bun:1 AS builder
 
-# Create app directory
+# Set build arguments
+ARG DATABASE_URL
+ARG PORT
+
+# Set environment variables for build
+ENV DATABASE_URL=$DATABASE_URL
+ENV PORT=$PORT
+
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lockb* ./
 COPY prisma ./prisma/
 
 # Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN bun install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Generate Prisma client
-RUN npx prisma generate
+RUN bunx prisma generate
 
 # Build the application
-RUN npm run build
+RUN bun run build
 
 # Production stage
-FROM node:20-alpine AS production
+FROM oven/bun:1-slim
 
 WORKDIR /app
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/prisma ./prisma
 
+# Set runtime environment variables
+ENV NODE_ENV=production
+ENV PORT=4000
+
 EXPOSE 4000
-CMD ["npm", "run", "start"]
-# Run migrations: docker-compose exec api npx prisma migrate deploy
-# seed: docker-compose exec api npx prisma db seed
+
+# Start the application
+CMD ["bun", "run", "start:prod"]
+
+# Run migrations: bun prisma migrate deploy
+# Seed: bun prisma db seed
