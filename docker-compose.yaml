@@ -13,8 +13,6 @@ services:
       - .env
     ports:
       - '4000'
-    networks:
-      - dokploy-network
 
   postgres:
     image: postgres:17
