@@ -1,51 +1,25 @@
-# Build stage
-FROM oven/bun:1 AS builder
+FROM node:20.18
 
-# Set build arguments
-ARG DATABASE_URL
-ARG PORT
+# Create app directory, this is in our container/in our image
+WORKDIR /home/nest/app
 
-# Set environment variables for build
-ENV DATABASE_URL=$DATABASE_URL
-ENV PORT=$PORT
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
 
-WORKDIR /app
+RUN npm install
 
-# Copy package files
-COPY package.json bun.lockb* ./
-COPY prisma ./prisma/
 
-# Install dependencies
-RUN bun install --frozen-lockfile
-
-# Copy source code
+# Bundle app source
 COPY . .
 
-# Generate Prisma client
-RUN bunx prisma generate
+# Generate Prisma client for the container environment
+RUN npx prisma generate
 
-# Build the application
-RUN bun run build
+RUN npm run build
 
-# Production stage
-FROM oven/bun:1-slim
-
-WORKDIR /app
-
-# Copy built application
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
-
-# Set runtime environment variables
-ENV NODE_ENV=production
-ENV PORT=4000
 
 EXPOSE 4000
-
-# Start the application
-CMD ["bun", "run", "start:prod"]
-
-# Run migrations: bun prisma migrate deploy
-# Seed: bun prisma db seed
+CMD ["npm", "run", "start"]
+# Run migrations: docker-compose exec api npx prisma migrate deploy
+# seed: docker-compose exec api npx prisma db seed
