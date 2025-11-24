@@ -7,7 +7,7 @@ module.exports = {
   apps: [
     {
       name: 'nest-ecom',
-      script: `npm start -- -p ${port}`,
+      script: `npm start -- --p ${port}`,
       error_file: 'log/error.log',
       out_file: 'log/out.log',
       args: '',

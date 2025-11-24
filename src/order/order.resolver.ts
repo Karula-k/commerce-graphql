@@ -1,10 +1,18 @@
 import { Inject } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+  Root,
+} from '@nestjs/graphql';
 
 import { DatabaseService } from 'src/database/database.service';
 import { OrderEntity } from './entities/order.entity';
 import { CreateOrderInput } from './dto/create-order.input';
 import { orderStatus } from '@prisma/client';
+import { OrderProductEntity } from 'src/order-product/entities/order-product.entity';
 
 @Resolver(() => OrderEntity)
 export class OrderResolver {
@@ -74,5 +82,16 @@ export class OrderResolver {
       return order;
     });
     return created;
+  }
+
+  @ResolveField('orderProducts', () => [OrderProductEntity], { nullable: true })
+  async orderProducts(
+    @Root() order: OrderEntity,
+  ): Promise<OrderProductEntity[]> {
+    return this.databaseService.orderProduct.findMany({
+      where: {
+        orderId: order.id,
+      },
+    });
   }
 }

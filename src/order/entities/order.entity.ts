@@ -1,6 +1,8 @@
 import { Field, Float, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { orderStatus } from '@prisma/client';
 
+import { OrderProductEntity } from 'src/order-product/entities/order-product.entity';
+
 registerEnumType(orderStatus, { name: 'OrderStatus' });
 
 @ObjectType()
@@ -25,4 +27,7 @@ export class OrderEntity {
 
   @Field(() => Date)
   updatedAt: Date;
+
+  @Field(() => [OrderProductEntity], { nullable: true })
+  orderProducts?: OrderProductEntity[];
 }

@@ -2,6 +2,33 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ProductEntity {
+  id: String!
+  name: String!
+  category: String!
+  price: Float!
+  stock: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type OrderProductEntity {
+  id: String!
+  orderId: String!
+  productId: String!
+  quantity: Int!
+  price: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  product: ProductEntity
+  order: OrderEntity
+}
+
 type OrderEntity {
   id: String!
   userId: String!
@@ -10,6 +37,7 @@ type OrderEntity {
   totalAmount: Float!
   createdAt: Timestamp!
   updatedAt: Timestamp!
+  orderProducts: [OrderProductEntity!]
 }
 
 enum OrderStatus {
@@ -22,37 +50,10 @@ enum OrderStatus {
   refund
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
 type UserEntity {
   id: String!
   name: String!
   orders: [OrderEntity]
-}
-
-type ProductEntity {
-  id: String!
-  name: String!
-  category: String!
-  price: Float!
-  stock: Int!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-}
-
-type OrderProductEntity {
-  id: String!
-  orderId: String!
-  productId: String!
-  quantity: Int!
-  price: Float!
-  createdAt: Timestamp!
-  updatedAt: Timestamp!
-  product: ProductEntity
-  order: OrderEntity
 }
 
 type TransactionEntity {
